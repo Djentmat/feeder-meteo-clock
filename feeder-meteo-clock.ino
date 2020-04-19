@@ -1,9 +1,18 @@
+<<<<<<< HEAD
+=======
+// Подключаем библиотеки для работы
+>>>>>>> f23bed90377a132aca0aeca0aef31af2cdcb7e16
 #include <GyverTimer.h>
 #include <iarduino_RTC.h>
 #include <Servo.h>
 #include <Adafruit_BMP280.h>
 
 #include <PCF8812_new.h>
+<<<<<<< HEAD
+=======
+#include "cell_blk.h"
+#include "cell_wht.h"
+>>>>>>> f23bed90377a132aca0aeca0aef31af2cdcb7e16
 #include "feeder_empty.h"
 #include "feeder_full.h"
 #include "pressure.h"
@@ -15,26 +24,43 @@
 
 // Инициализация переменных
 byte feed_hour_1 = 9;
+<<<<<<< HEAD
 byte feed_minute_1 = 02;
 //----------------------|
 byte feed_hour_2 = 9;
 byte feed_minute_2 = 04;
+=======
+byte feed_minute_1 = 00;
+//----------------------|
+byte feed_hour_2 = 9;
+byte feed_minute_2 = 00;
+>>>>>>> f23bed90377a132aca0aeca0aef31af2cdcb7e16
 //----------------------|
 byte feed_hour_3 = 9;
 byte feed_minute_3 = 00;
 //----------------------|
+<<<<<<< HEAD
 byte time_hour = 8;
 byte time_minutes = 59;
+=======
+byte time_hour = 14;
+byte time_minutes = 43;
+>>>>>>> f23bed90377a132aca0aeca0aef31af2cdcb7e16
 byte time_seconds = 00;
 byte time_day = 06;
 byte time_month = 04;
 byte time_year = 20;
 
+<<<<<<< HEAD
 boolean butt_flag, flag_set, set_on_flag, feeder_flag;
+=======
+boolean butt_flag, flag_set, set_on_flag;
+>>>>>>> f23bed90377a132aca0aeca0aef31af2cdcb7e16
 unsigned long pressure_val, aver_pressure,  pressure_array[24];
 unsigned long min_mapped_press, max_mapped_press, last_button;
 unsigned long sumX, sumY, sumX2, sumXY;
 float a;
+<<<<<<< HEAD
 int aver_temper, mode_graph, buff_val, buff_val2, buff_val3, buff_val4, delta, temp;
 int approx, min_mapped_temp, max_mapped_temp, servo_delay = 500, time_val, buff = 0.0;
 int temp_array[24], time_array[24], temp_mapped[24], press_mapped[24];
@@ -42,6 +68,15 @@ byte sec_now, sec_buff = 0, graph_flag = 0, time_selector = 0, feed_selector = 0
 
 //GTimer_ms hour_timer(2000);
 GTimer_ms hour_timer((long)60*60 * 1000);
+=======
+int aver_temper, Mode_graph, buff_val, buff_val2, buff_val3, buff_val4, delta, temp;
+int flag, approx, min_mapped_temp, max_mapped_temp,  buff = 0.0;
+int temp_array[24], time_array[24], temp_mapped[24], press_mapped[24];
+byte sec_now, sec_buff = 0;
+
+GTimer_ms hour_timer(2000);
+//GTimer_ms hour_timer((long)60*60 * 1000);
+>>>>>>> f23bed90377a132aca0aeca0aef31af2cdcb7e16
 GTimer_ms draw_scr_timer(1 * 1000);
 GTimer_ms buttons_timer(500);
 
@@ -53,9 +88,12 @@ Servo servo;
 Adafruit_BMP280 bmp; // I2C
 
 void setup() {
+<<<<<<< HEAD
   for (byte i = 0; i < 3; i++) {
     feed_mem[i] = 0;
   }
+=======
+>>>>>>> f23bed90377a132aca0aeca0aef31af2cdcb7e16
 
   // Инициализируем часы
   time.begin();
@@ -93,17 +131,34 @@ void setup() {
                   Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */
 }
 
+<<<<<<< HEAD
 void read_graph_btn() {
   boolean button2 = !digitalRead(A2);
 
   if (button2 == 1 && flag_set == 0 && millis() - last_button > 200) {
     flag_set == 1;
     graph_flag += 1;
+=======
+byte read_btn() {
+  boolean button2 = !digitalRead(A2);
+  boolean button1 = !digitalRead(A1);
+  boolean button3 = !digitalRead(A3);
+
+  if (button2 == 1 && flag_set == 0 && millis() - last_button > 200) {
+    flag_set == 1;
+    set_on_flag = !set_on_flag;
+    Mode_graph += 1;
+    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+    delay(500);                       // wait for a second
+    digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+    //delay(500);
+>>>>>>> f23bed90377a132aca0aeca0aef31af2cdcb7e16
     last_button = millis();
   }
 
   if (button2 == 0 && flag_set == 1) {
     flag_set == 0;
+<<<<<<< HEAD
   }
   if (graph_flag > 4) graph_flag = 0;
 }
@@ -259,6 +314,62 @@ void check_feeder() {
       || (time.minutes == feed_minute_3 + 1)) {
     feeder_flag = 0;
   }
+=======
+    set_on_flag = !set_on_flag;
+  }
+
+  if (button1 == 1 && butt_flag == 0 && millis() - last_button > 200) {
+    butt_flag = 1;
+    flag = flag + 1;
+    last_button = millis();
+    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+    delay(500);                       // wait for a second
+    digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+  }
+  if (button1 == 0 && butt_flag == 1) {
+    butt_flag = 0;
+
+  }
+  if (button3 == 1 && butt_flag == 0 && millis() - last_button > 200) {
+    butt_flag = 1;
+    flag = flag - 1;
+    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+    delay(500);                       // wait for a second
+    digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+    //delay(1000);
+    last_button = millis();
+  }
+  if (button3 == 0 && butt_flag == 1) {
+    butt_flag = 0;
+  }
+  if (flag > 3) {
+    flag = 0;
+  }
+  if (flag < 0) {
+    flag = 3;
+  }
+  if (Mode_graph > 24) {
+    Mode_graph = 0;
+  }
+}
+
+void check_feeder() {
+
+  //Проверяем не пришло ли время покормить животное
+  if (((time.Hours == feed_hour_1) && (time.minutes == feed_minute_1) && (time.seconds == 00))
+      || ((time.Hours == feed_hour_2) && (time.minutes == feed_minute_2) && (time.seconds == 00))
+      || ((time.Hours == feed_hour_3) && (time.minutes == feed_minute_3) && (time.seconds == 00))
+     )
+  {
+    servo.attach(SERVO_PIN);
+    servo.write(90);
+    delay(500);
+    servo.write(0);
+    delay(500);
+    servo.detach();
+  }
+  else delay(13);
+>>>>>>> f23bed90377a132aca0aeca0aef31af2cdcb7e16
 }
 
 void draw_main_scr() {
@@ -279,6 +390,7 @@ void draw_main_scr() {
     //draw date
     LcdRoundRect(43, 2, 51, 14, 3, ON);
     LcdsetFont(font_5x8);
+<<<<<<< HEAD
     LcdGotoXY(45, 6);
     LcdPrint(time.gettime("d.m.y"), ON, 1);
 
@@ -291,6 +403,10 @@ void draw_main_scr() {
     LcdGotoXY(7, 33);
     LcdsetFont(font_5x8);
     LcdPrint(approx, ON, 1);
+=======
+    LcdGotoXY(66, 6);
+    LcdPrint(time.gettime("d.m"), ON, 1);
+>>>>>>> f23bed90377a132aca0aeca0aef31af2cdcb7e16
 
     //draw pressure
     LcdRoundRect(2, 48, 50, 14, 3, ON);
@@ -314,6 +430,7 @@ void draw_main_scr() {
     dtostrf(temp_f, 4, 2, str_temp);
     LcdPrint(str_temp, ON, 1);
 
+<<<<<<< HEAD
 
   }
   while (LcdPageTWO());
@@ -366,6 +483,10 @@ void draw_set_time_scr(byte set_time) {
     LcdGotoXY(3, 3);
     LcdPrint("Время,дата,корм", ON, 1);
     LcdGotoXY(26, 19);
+=======
+    LcdGotoXY(7, 24);
+    LcdsetFont(font_12x16_rus);
+>>>>>>> f23bed90377a132aca0aeca0aef31af2cdcb7e16
     LcdPrint(time.gettime("H:i:s"), ON, 1);
     LcdGotoXY(26, 35);
     LcdPrint(time.gettime("d.m.y"), ON, 1);
@@ -408,6 +529,7 @@ void draw_set_time_scr(byte set_time) {
   delay(1000);
 }
 
+<<<<<<< HEAD
 void read_feed_selector() {
 
   boolean btn_right = !digitalRead(A1);
@@ -536,6 +658,57 @@ void draw_feed_scr(byte feed_controller) {
       LcdPrint("*", ON, 1);
     }
 
+=======
+void draw_press_graph() {
+  LcdPageONE();
+  do {
+    LcdRoundRect(0, 0, 101, 64, 3, ON);
+    LcdsetFont(font_5x8);
+    LcdGotoXY(3, 3);
+    LcdPrint("Давление:", ON, 1);
+    buff_val4 = set_col(press_mapped, Mode_graph, 0);
+    LcdGotoXY(56, 3);
+    LcdPrint(buff_val4, ON, 1);
+    LcdGotoXY(81, 3);
+    LcdPrint(min_mapped_press, ON, 1);
+    LcdGotoXY(81, 12);
+    LcdPrint(max_mapped_press, ON, 1);
+  }
+  while (LcdPageTWO());
+  delay(1000);
+}
+
+void draw_temp_graph() {
+  LcdPageONE();
+  do {
+    LcdRoundRect(0, 0, 101, 64, 3, ON);
+    LcdsetFont(font_5x8);
+    LcdGotoXY(3, 3);
+    LcdPrint("Температура:", ON, 1);
+    buff_val4 = set_col(temp_mapped, Mode_graph, 1);
+    LcdGotoXY(74, 3);
+    LcdPrint(buff_val4, ON, 1);
+    LcdGotoXY(88, 3);
+    LcdPrint(min_mapped_temp, ON, 1);
+    LcdGotoXY(88, 12);
+    LcdPrint(max_mapped_temp, ON, 1);
+  }
+  while (LcdPageTWO());
+  delay(1000);
+}
+
+void draw_settings_scr() {
+  LcdPageONE();
+  do {
+      LcdsetFont(font_5x8);
+      LcdRoundRect(0, 0, 101, 64, 3, ON);
+      LcdGotoXY(3, 3);
+      LcdPrint("Настройки:", ON, 1);
+      LcdGotoXY(10, 12);
+      LcdPrint("Кормушка", ON, 1);
+      LcdGotoXY(10, 21);
+      LcdPrint("Время", ON, 1);
+>>>>>>> f23bed90377a132aca0aeca0aef31af2cdcb7e16
   }
   while (LcdPageTWO());
   delay(1000);
@@ -635,7 +808,11 @@ int set_col(int arr[], int num, boolean mode) {
       if (!mode) {
         buff_val3 = pressure_array[i] / 133.3;
       }
+<<<<<<< HEAD
       else {
+=======
+      else{
+>>>>>>> f23bed90377a132aca0aeca0aef31af2cdcb7e16
         buff_val3 = temp_array[i];
       }
     }
@@ -652,6 +829,7 @@ void loop() {
   }
 
   if (buttons_timer.isReady()) {
+<<<<<<< HEAD
     read_graph_btn();
   }
 
@@ -762,6 +940,27 @@ void loop() {
       }
 
       draw_feed_scr(feed_selector);
+=======
+    read_btn();
+  }
+
+  if (draw_scr_timer.isReady()) {
+
+    if (flag == 0) {
+      draw_main_scr();
+    }
+
+    if (flag == 1) {
+      draw_press_graph();
+    }
+
+    if (flag == 2) {
+      draw_temp_graph();
+    }
+
+    if (flag == 3) {
+      draw_settings_scr();
+>>>>>>> f23bed90377a132aca0aeca0aef31af2cdcb7e16
     }
   }
 }
