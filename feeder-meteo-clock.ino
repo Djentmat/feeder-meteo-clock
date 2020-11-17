@@ -93,13 +93,15 @@ void setup() {
 
   // Инициализация пинов на выход
   // диоды на кнопках
-  pinMode(5, OUTPUT);
+  pinMode(A6, OUTPUT);
+  digitalWrite(A6, LOW);
+  /*
   pinMode(4, OUTPUT);
   pinMode(3, OUTPUT);
   digitalWrite(5, LOW);
   digitalWrite(4, LOW);
   digitalWrite(3, LOW);
-
+  */
   // Инициализация дисплея А70
   LcdInit(10, 9, 8, 7, 6);  /*10 - CS,
                               09 - RESET,
@@ -257,12 +259,15 @@ void read_graph_btn() {
   boolean button2 = !digitalRead(A2);
    
   // если вход на "земле"
-  if (button2 == 1 && flag_set == 0 && millis() - last_button > 200) {
+  if (button2 == 1 && flag_set == 0 && millis() - last_button > 100) {
     // флаг для однократного нажатия
     flag_set == 1;
     // флаг переключения экранов 
     graph_flag += 1;  
     last_button = millis();
+    digitalWrite(A6, HIGH);   // turn the LED on (HIGH is the voltage level)
+    delay(100);                       // wait for a second
+    digitalWrite(A6, LOW);    // turn the LED off by making the voltage LOW
   }
   // иначе сброс флага однократного нажатия
   if (button2 == 0 && flag_set == 1) {
@@ -280,19 +285,25 @@ void read_graph_btn_state() {
   boolean btn_left = !digitalRead(A1);
   boolean btn_right = !digitalRead(A3);
 
-  if (btn_left == 1 && butt_flag == 0 && millis() - last_button > 200) {
+  if (btn_left == 1 && butt_flag == 0 && millis() - last_button > 100) {
     butt_flag = 1;
     mode_graph -= 1;
     last_button = millis();
+    digitalWrite(A6, HIGH);   // turn the LED on (HIGH is the voltage level)
+    delay(100);                       // wait for a second
+    digitalWrite(A6, LOW);    // turn the LED off by making the voltage LOW
   }
   if (btn_left == 0 && butt_flag == 1) {
     butt_flag = 0;
   }
 
-  if (btn_right == 1 && butt_flag == 0 && millis() - last_button > 200) {
+  if (btn_right == 1 && butt_flag == 0 && millis() - last_button > 100) {
     butt_flag = 1;
     mode_graph += 1;
     last_button = millis();
+    digitalWrite(A6, HIGH);   // turn the LED on (HIGH is the voltage level)
+    delay(100);                       // wait for a second
+    digitalWrite(A6, LOW);    // turn the LED off by making the voltage LOW
   }
   if (btn_right == 0 && butt_flag == 1) {
     butt_flag = 0;
@@ -307,11 +318,14 @@ void read_graph_btn_state() {
 void read_time_selector() {
   boolean btn_right = !digitalRead(A1);
 
-  if (btn_right == 1 && flag_set == 0 && millis() - last_button > 200) {
+  if (btn_right == 1 && flag_set == 0 && millis() - last_button > 100) {
     flag_set == 1;
     time_selector += 1;
     if (time_selector > 6) time_selector = 0;
     last_button = millis();
+    digitalWrite(A6, HIGH);   // turn the LED on (HIGH is the voltage level)
+    delay(100);                       // wait for a second
+    digitalWrite(A6, LOW);    // turn the LED off by making the voltage LOW
   }
 
   if (btn_right == 0 && flag_set == 1) {
@@ -327,12 +341,15 @@ void read_time_selector() {
 void read_time_changer() {
   boolean btn_left = !digitalRead(A3);
 
-  if (btn_left == 1 && flag_set == 0 && millis() - last_button > 200) {
+  if (btn_left == 1 && flag_set == 0 && millis() - last_button > 100) {
     flag_set == 1;
+    digitalWrite(A6, HIGH);   // turn the LED on (HIGH is the voltage level)
+    delay(100);                       // wait for a second
+    digitalWrite(A6, LOW);    // turn the LED off by making the voltage LOW
     if (time_selector == 6)time_val += 100;
     else time_val += 1;
     if (time_selector == 0) {
-      if (time_val > 24) time_val = 0;
+      if (time_val > 23) time_val = 0;
       time.settime(-1,
                    -1,
                    time_val);
@@ -374,8 +391,7 @@ void read_time_changer() {
 
     if (time_selector == 5) {
       if (time_val > 99) time_val = 0;
-      time.settime(time_val,
-                   -1,
+      time.settime(-1,
                    -1,
                    -1,
                    -1,
@@ -413,6 +429,11 @@ void run_servo() {
 // функции сервопривода
 //---------------------------------------------------
 void check_feeder() {
+  boolean extra_feed = !digitalRead(2);
+  if (extra_feed == 1){
+    run_servo();
+  }
+  
   //Проверяем не пришло ли время покормить животное
   if ((time.Hours == feed_hour_1)
       && (time.minutes == feed_minute_1)
@@ -612,11 +633,14 @@ void read_feed_selector() {
 
   boolean btn_right = !digitalRead(A1);
 
-  if (btn_right == 1 && flag_set == 0 && millis() - last_button > 200) {
+  if (btn_right == 1 && flag_set == 0 && millis() - last_button > 100) {
     flag_set == 1;
     feed_selector += 1;
     if (feed_selector > 5) feed_selector = 0;
     last_button = millis();
+    digitalWrite(A6, HIGH);   // turn the LED on (HIGH is the voltage level)
+    delay(100);                       // wait for a second
+    digitalWrite(A6, LOW);    // turn the LED off by making the voltage LOW
   }
 
   if (btn_right == 0 && flag_set == 1) {
@@ -632,9 +656,12 @@ void read_feed_changer() {
 
   boolean btn_left = !digitalRead(A3);
 
-  if (btn_left == 1 && flag_set == 0 && millis() - last_button > 200) {
+  if (btn_left == 1 && flag_set == 0 && millis() - last_button > 100) {
     flag_set == 1;
     feed_val += 1;
+    digitalWrite(A6, HIGH);   // turn the LED on (HIGH is the voltage level)
+    delay(100);                       // wait for a second
+    digitalWrite(A6, LOW);    // turn the LED off by making the voltage LOW
 
     if (feed_selector == 0) {
       if (feed_val > 24) feed_val = 0;
