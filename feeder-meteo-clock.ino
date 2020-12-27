@@ -20,13 +20,13 @@
 #define SERVO_PIN A0
 
 byte feed_hour_1 = 9;
-byte feed_minute_1 = 02;
+byte feed_minute_1 = 00;
 //----------------------|
-byte feed_hour_2 = 9;
-byte feed_minute_2 = 04;
+//byte feed_hour_2 = 9;
+//byte feed_minute_2 = 01;
 //----------------------|
 byte feed_hour_3 = 9;
-byte feed_minute_3 = 00;
+byte feed_minute_3 = 02;
 //----------------------|
 byte time_hour = 8;
 byte time_minutes = 59;
@@ -43,12 +43,12 @@ float a;
 int aver_temper, mode_graph, buff_val, buff_val2, buff_val3, buff_val4, delta, temp;
 int approx, min_mapped_temp, max_mapped_temp, servo_delay = 500, time_val, buff = 0.0;
 int temp_array[24], time_array[24], temp_mapped[24], press_mapped[24];
-byte sec_now, sec_buff = 0, graph_flag = 0, time_selector = 0, feed_selector = 0,  feed_val, feed_mem[3];
+byte graph_flag = 0, time_selector = 0, feed_selector = 0,  feed_val, feed_mem[3];
 
 //GTimer_ms hour_timer(2000); //DEBUG
 GTimer_ms hour_timer((long)60 * 60 * 1000);
-GTimer_ms draw_scr_timer(1 * 1000);
-GTimer_ms buttons_timer(500);
+GTimer_ms draw_scr_timer(1 * 40);
+GTimer_ms buttons_timer(200);
 
 iarduino_RTC time(RTC_DS1302, 13, 12, 11); /*13 PIN - RST
                                           11 PIN - DAT
@@ -137,9 +137,11 @@ void loop() {
   }
 
   if (draw_scr_timer.isReady()) {
-    if (feed_mem[0] == 1 && feed_mem[1] == 1 && feed_mem[2] == 1) {
+    if (feed_mem[0] == 1 && 
+        //feed_mem[1] == 1 && 
+        feed_mem[2] == 1) {
       feed_mem[0] = 0;
-      feed_mem[1] = 0;
+      //feed_mem[1] = 0;
       feed_mem[2] = 0;
     }
     check_feeder();
@@ -224,14 +226,14 @@ void loop() {
         read_feed_changer();
       }
 
-      if (feed_selector == 2) {
+      /*if (feed_selector == 2) {
         feed_val = feed_hour_2;
         read_feed_changer();
       }
       if (feed_selector == 3) {
         feed_val = feed_minute_2;
         read_feed_changer();
-      }
+      }*/
 
       if (feed_selector == 4) {
         feed_val = feed_hour_3;
@@ -265,9 +267,6 @@ void read_graph_btn() {
     // флаг переключения экранов 
     graph_flag += 1;  
     last_button = millis();
-    digitalWrite(A6, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(100);                       // wait for a second
-    digitalWrite(A6, LOW);    // turn the LED off by making the voltage LOW
   }
   // иначе сброс флага однократного нажатия
   if (button2 == 0 && flag_set == 1) {
@@ -289,9 +288,6 @@ void read_graph_btn_state() {
     butt_flag = 1;
     mode_graph -= 1;
     last_button = millis();
-    digitalWrite(A6, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(100);                       // wait for a second
-    digitalWrite(A6, LOW);    // turn the LED off by making the voltage LOW
   }
   if (btn_left == 0 && butt_flag == 1) {
     butt_flag = 0;
@@ -301,9 +297,6 @@ void read_graph_btn_state() {
     butt_flag = 1;
     mode_graph += 1;
     last_button = millis();
-    digitalWrite(A6, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(100);                       // wait for a second
-    digitalWrite(A6, LOW);    // turn the LED off by making the voltage LOW
   }
   if (btn_right == 0 && butt_flag == 1) {
     butt_flag = 0;
@@ -323,9 +316,6 @@ void read_time_selector() {
     time_selector += 1;
     if (time_selector > 6) time_selector = 0;
     last_button = millis();
-    digitalWrite(A6, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(100);                       // wait for a second
-    digitalWrite(A6, LOW);    // turn the LED off by making the voltage LOW
   }
 
   if (btn_right == 0 && flag_set == 1) {
@@ -343,9 +333,6 @@ void read_time_changer() {
 
   if (btn_left == 1 && flag_set == 0 && millis() - last_button > 100) {
     flag_set == 1;
-    digitalWrite(A6, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(100);                       // wait for a second
-    digitalWrite(A6, LOW);    // turn the LED off by making the voltage LOW
     if (time_selector == 6)time_val += 100;
     else time_val += 1;
     if (time_selector == 0) {
@@ -437,31 +424,32 @@ void check_feeder() {
   //Проверяем не пришло ли время покормить животное
   if ((time.Hours == feed_hour_1)
       && (time.minutes == feed_minute_1)
-      && (feeder_flag == 0)) {
-    feeder_flag = 1;
+      && (time.seconds == 0)
+      && (feed_mem[0] == 0)){
     run_servo();
     feed_mem[0] = 1;
   }
 
-  if ((time.Hours == feed_hour_2)
+  /*if ((time.Hours == feed_hour_2)
       && (time.minutes == feed_minute_2)
-      && (feeder_flag == 0)) {
-    feeder_flag = 1;
+      && (time.seconds == 0)
+      && (feed_mem[1] == 0)) {
     run_servo();
     feed_mem[1] = 1;
-  }
+  }*/
 
   if ((time.Hours == feed_hour_3)
       && (time.minutes == feed_minute_3)
-      && (feeder_flag == 0)) {
-    feeder_flag = 1;
+      && (time.seconds == 0)
+      && (feed_mem[2] == 0)) {
     run_servo();
     feed_mem[2] = 1;
   }
 
   if ((time.minutes == feed_minute_1 + 1)
-      || (time.minutes == feed_minute_2 + 1)
-      || (time.minutes == feed_minute_3 + 1)) {
+      //|| (time.minutes == feed_minute_2 + 1)
+      || (time.minutes == feed_minute_3 + 1)) 
+      {
     feeder_flag = 0;
   }
 }
@@ -479,8 +467,8 @@ void draw_main_scr() {
 
     if (feed_mem[0] == 0)LcdBitmap(8, 4, feeder_empty, ON);
     if (feed_mem[0] == 1)LcdBitmap(8, 4, feeder_full, ON);
-    if (feed_mem[1] == 0)LcdBitmap(18, 4, feeder_empty, ON);
-    if (feed_mem[1] == 1)LcdBitmap(18, 4, feeder_full, ON);
+    //if (feed_mem[1] == 0)LcdBitmap(18, 4, feeder_empty, ON);
+    //if (feed_mem[1] == 1)LcdBitmap(18, 4, feeder_full, ON);
     if (feed_mem[2] == 0)LcdBitmap(28, 4, feeder_empty, ON);
     if (feed_mem[2] == 1)LcdBitmap(28, 4, feeder_full, ON);
 
@@ -524,7 +512,7 @@ void draw_main_scr() {
     LcdPrint(str_temp, ON, 1);
   }
   while (LcdPageTWO());
-  delay(1000);
+  delay(40);
 }
 
 //---------------------------------------------------
@@ -546,7 +534,7 @@ void draw_press_graph() {
     LcdPrint(max_mapped_press, ON, 1);
   }
   while (LcdPageTWO());
-  delay(1000);
+  ;
 }
 
 //---------------------------------------------------
@@ -568,7 +556,7 @@ void draw_temp_graph() {
     LcdPrint(max_mapped_temp, ON, 1);
   }
   while (LcdPageTWO());
-  delay(1000);
+  ;
 }
 
 //---------------------------------------------------
@@ -622,7 +610,7 @@ void draw_set_time_scr(byte set_time) {
     }
   }
   while (LcdPageTWO());
-  delay(1000);
+  ;
 }
 
 //---------------------------------------------------
@@ -638,9 +626,6 @@ void read_feed_selector() {
     feed_selector += 1;
     if (feed_selector > 5) feed_selector = 0;
     last_button = millis();
-    digitalWrite(A6, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(100);                       // wait for a second
-    digitalWrite(A6, LOW);    // turn the LED off by making the voltage LOW
   }
 
   if (btn_right == 0 && flag_set == 1) {
@@ -659,9 +644,6 @@ void read_feed_changer() {
   if (btn_left == 1 && flag_set == 0 && millis() - last_button > 100) {
     flag_set == 1;
     feed_val += 1;
-    digitalWrite(A6, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(100);                       // wait for a second
-    digitalWrite(A6, LOW);    // turn the LED off by making the voltage LOW
 
     if (feed_selector == 0) {
       if (feed_val > 24) feed_val = 0;
@@ -673,7 +655,7 @@ void read_feed_changer() {
       feed_minute_1 = feed_val;
     }
 
-    if (feed_selector == 2) {
+    /*if (feed_selector == 2) {
       if (feed_val > 24) feed_val = 0;
       feed_hour_2 = feed_val;
     }
@@ -681,7 +663,7 @@ void read_feed_changer() {
     if (feed_selector == 3) {
       if (feed_val > 59) feed_val = 0;
       feed_minute_2 = feed_val;
-    }
+    }*/
 
     if (feed_selector == 4) {
       if (feed_val > 24) feed_val = 0;
@@ -734,7 +716,7 @@ void draw_feed_scr(byte feed_controller) {
       LcdPrint("*", ON, 1);
     }
 
-    LcdGotoXY(3, 39);
+    /*LcdGotoXY(3, 39);
     LcdPrint("h2 = ", ON, 1);
     LcdGotoXY(32, 39);
     LcdPrint(feed_hour_2, ON, 1);
@@ -750,7 +732,7 @@ void draw_feed_scr(byte feed_controller) {
     if (feed_selector == 3) {
       LcdGotoXY(79, 33);
       LcdPrint("*", ON, 1);
-    }
+    }*/
 
     LcdGotoXY(3, 56);
     LcdPrint("h3 = ", ON, 1);
@@ -772,7 +754,7 @@ void draw_feed_scr(byte feed_controller) {
 
   }
   while (LcdPageTWO());
-  delay(1000);
+  ;
   }
 
 //---------------------------------------------------
